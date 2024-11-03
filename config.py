@@ -10,3 +10,4 @@ ENABLE_CORS = True  # Enable CORS compliancy only if the front app is served by 
 # DATA SOURCE
 CANDIDATURE_SOURCE = 'local/fr-esr-mon_master.csv'
 INSERTION_SOURCE = 'local/fr-esr-insertion_professionnelle-master.csv'
+DISC_MAPPING_SOURCE = 'local/mappingCandIns.csv'
