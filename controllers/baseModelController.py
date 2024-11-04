@@ -1,6 +1,7 @@
 import logging
 from flask import Blueprint, Response, make_response, jsonify, request
 
+from controllers.http_cache_management import http_cached
 from masterStats.MasterStatsManager import MasterStatsManager
 
 __all__ = ['base_model_controller']
@@ -10,13 +11,16 @@ base_model_controller = Blueprint('base-model', __name__)
 LOG = logging.getLogger(__name__)
 
 
+
 @base_model_controller.route("/api/rest/academies", methods=['GET'])
+@http_cached()
 def get_academies():
     df = MasterStatsManager().academies_df
     return jsonify(df.reset_index())
 
 
 @base_model_controller.route("/api/rest/etablissements", methods=['GET'])
+@http_cached()
 def get_etablissements():
     df = MasterStatsManager().etablissements_df
     return jsonify(df.reset_index())
@@ -29,6 +33,7 @@ def get_sect_discs():
 
 
 @base_model_controller.route("/api/rest/mentions", methods=['GET'])
+@http_cached()
 def get_mentions():
     df = MasterStatsManager().mentions_df
     return jsonify(df.reset_index())
