@@ -27,6 +27,8 @@ def search_candidatures(search_options: StatSearchOptions):
         cands_filter &= _filter_serie_on_single_or_many_values(original_cands.etabUai, search_options.etablissements_filter)
     if search_options.mentions_filter:
         cands_filter &= _filter_serie_on_single_or_many_values(original_cands.mentionId, search_options.mentions_filter)
+    if search_options.formations_filter:
+        cands_filter &= _filter_serie_on_single_or_many_values(original_cands.index, search_options.formations_filter)
     if search_options.sec_disc_filter:
         cands_filter &= _filter_serie_on_single_or_many_values(original_cands.secDiscId, search_options.sec_disc_filter)
     if search_options.disciplines_filter:

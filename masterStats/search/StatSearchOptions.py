@@ -9,7 +9,7 @@ LOG = logging.getLogger(__name__)
 class StatSearchOptions:
     __slots__ = ['regions_filter', 'academies_filter', 'etablissements_filter', 'mentions_filter',
                  'sec_disc_filter', 'disciplines_filter', 'annee_filter', 'annee_mini_filter',
-                 'annee_maxi_filter', 'mois_apres_dip_filter', 'type_stats', 'cand_details', 'inspro_details']
+                 'annee_maxi_filter', 'mois_apres_dip_filter', 'formations_filter', 'type_stats', 'cand_details', 'inspro_details']
 
     def __init__(self):
         self.regions_filter: Optional[List[int]] = None
@@ -22,6 +22,7 @@ class StatSearchOptions:
         self.annee_mini_filter: Optional[int] = None
         self.annee_maxi_filter: Optional[int] = None
         self.mois_apres_dip_filter: Optional[int] = None # 18 or 30 so far according to current stats data
+        self.formations_filter: Optional[List[str]] = None # Attention, ne s'applique qu'aux stats de candidature
         self.type_stats: str = "all" # all, candidatures or insertionsPro
         self.cand_details: List[str] = ['general'] # general, experience, origine, all
         self.inspro_details: List[str] = ['general'] # general, emplois, salaire, refRegion, all
@@ -46,6 +47,7 @@ class StatSearchOptions:
             'annee_mini_filter': (True, False, int, None),
             'annee_maxi_filter': (True, False, int, None),
             'mois_apres_dip_filter': (True, False, int, None),
+            'formations_filter': (True, True, str, None),
             'type_stats': (False, False, str, ['all', 'candidatures', 'insertionsPro']),
             'cand_details': (False, True, str, ['all', 'general', 'experience', 'origine']),
             'inspro_details': (False, True, str, ['all', 'general', 'emplois', 'salaire', 'refRegion'])
@@ -86,7 +88,7 @@ class StatSearchOptions:
             it_var_in_out = [('regionIds', 'regions_filter'), ('academieIds', 'academies_filter'),
                              ('etablissementIds', 'etablissements_filter'), ('mentionIds', 'mentions_filter'),
                              ('secteurDisciplinaireIds', 'sec_disc_filter'), ('disciplineIds', 'disciplines_filter'),
-                             ('annees', 'annee_filter')]
+                             ('annees', 'annee_filter'), ('formationIfcs', 'formations_filter')]
             dir_var_in_out = [('anneeMin', 'annee_mini_filter'), ('anneeMax', 'annee_maxi_filter'),
                               ('moisApresDiplome', 'mois_apres_dip_filter')]
 
@@ -134,6 +136,7 @@ class StatSearchOptions:
                 'mentionIds': 'Identifiant de mention (int) ou tableau d\'identifiants de mention. Optionnel.',
                 'secteurDisciplinaireIds': 'Identifiant de secteur disciplinaire (int) ou tableau d\'identifiants de secteurs disciplinaires. Optionnel.',
                 'disciplineIds': 'Identifiant de discipline (int) ou tableau d\'identifiants de disciplines. Optionnel.',
+                'formationIfcs': 'Identifiant de formation (str) ou tableau d\'identifiants de formations. Ne s\'applique que pour les candidatures. Optionnel.',
                 'annees': 'Année de collecte (int) ou tableau d\'années de collecte. Optionnel.',
                 'anneeMin': 'Année minimale de collecte, inclue (int). Optionnel.',
                 'anneeMax': 'Année minimale de collecte, exclue (int). Optionnel.',
