@@ -1,6 +1,7 @@
 import atexit
 import logging
 from argparse import ArgumentParser
+
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -17,24 +18,9 @@ LOG = logging.getLogger(__name__)
 
 
 def setup_argument_parser() -> ArgumentParser:
-    parser = ArgumentParser(description="Teacher AI Support Server")
+    parser = ArgumentParser(description="Master stats API")
     parser.add_argument('-c', '--config', help="Configuration file location (default: ./config.py)",
                         metavar='<configuration file>', type=str, default='./config.py')
-    parser.add_argument('-l', '--log-level', help="Level of logger", metavar='<logging level>', type=str,
-                        default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'FATAL'])
-    return parser
-
-
-def setup_argument_parser() -> ArgumentParser:
-    parser = ArgumentParser(description="Teacher AI Support Server")
-    parser.add_argument('-c', '--config', help="Configuration file location (default: ./config.py)",
-                        metavar='<configuration file>', type=str, default='./config.py')
-    parser.add_argument('--variable-description',
-                        help="Variable description CSV file (default: ./taxonomy_metrics.csv)",
-                        metavar='<variable description file>', type=str, default='./taxonomy_metrics.csv')
-    parser.add_argument('--iaModels-path',
-                        help="Model storage path (default: /tmp/iaModels)",
-                        metavar='<model folder path>', type=str, default='/tmp/iaModels')
     parser.add_argument('-l', '--log-level', help="Level of logger", metavar='<logging level>', type=str,
                         default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'FATAL'])
     return parser
@@ -43,7 +29,7 @@ def setup_argument_parser() -> ArgumentParser:
 def create_server_apps(config_file_path: str, log_level: str) -> Flask:
     # Flask application
     LOG.info("Init flask app with configuration file {}..."
-             .format( config_file_path))
+             .format(config_file_path))
     app: Flask = Flask(__name__)
     app.config.from_pyfile(config_file_path)
     app.config['LOG_LEVEL'] = log_level  # Will be used by subprocesses to configure their logging
@@ -72,12 +58,7 @@ def create_server_apps(config_file_path: str, log_level: str) -> Flask:
 
     # Stats Singleton service setup
     app.logger.info("Stats Manager setup")
-    MasterStatsManager(app.config).build_stats()
-    app.logger.info("Build mongo cache if required")
-    MasterStatsManager().build_mongo_cache()
-
-    # Mongo text model
-
+    MasterStatsManager(app.config).build_api_stats()
 
     # REST Controllers setup
     app.logger.info("REST Controller setup")

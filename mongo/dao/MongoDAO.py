@@ -18,6 +18,8 @@ LOG = logging.getLogger(__name__)
 class MongoDAO(metaclass=Singleton):
     __slots__ = ['__configuration', '__connection', '__database_name', '__db']
     formation_col_name = 'formations'
+    candidature_col_name = 'candidatures'
+    insertionpro_col_name = 'insertionspro'
 
     def __init__(self, configuration: Dict = None):
         self.__configuration: Dict = configuration

@@ -16,6 +16,7 @@ MONGO_AUTH_SOURCE = 'admin'
 CANDIDATURE_SOURCE = 'local/fr-esr-mon_master.csv'
 INSERTION_SOURCE = 'local/fr-esr-insertion_professionnelle-master.csv'
 DISC_MAPPING_SOURCE = 'local/mappingCandIns.csv'
+CITIES_SOURCE = 'local/cities.csv'
 
 # DEV CONFIG
 # use 0.0.0.0:5000 for a docker deployment

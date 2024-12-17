@@ -17,4 +17,4 @@ COPY . .
 RUN python -m compileall .
 
 # Entrypoint defined with an array to allow provide argument with CMD command
-ENTRYPOINT [ "/bin/sh", "./start_server.sh" ]
+CMD "./start_server.sh"
