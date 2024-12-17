@@ -48,7 +48,9 @@ def main(log_level: str = 'INFO', config: str = './config.py'):
     LOG.info("Load full stats")
     master_stats_mgr.build_full_stats()
     LOG.info("(Re-)Build Mongo cache")
-    with MongoDAO(MongoDAO.compute_dao_options_from_app(config)):
+    with MongoDAO(MongoDAO.compute_dao_options_from_app(config)) as mongo_dao:
+        LOG.info("Mongo init index")
+        mongo_dao.init_indexes()
         master_stats_mgr.build_mongo_cache(clear_col=True)
     LOG.info("Cache building done")
 

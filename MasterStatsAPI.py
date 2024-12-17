@@ -53,8 +53,6 @@ def create_server_apps(config_file_path: str, log_level: str) -> Flask:
     app.logger.info("Open MongoDAO")
     mongo_dao = MongoDAO(MongoDAO.compute_dao_options_from_app(app.config))
     mongo_dao.open()
-    app.logger.info("Mongo init index")
-    mongo_dao.init_indexes()
 
     # Stats Singleton service setup
     app.logger.info("Stats Manager setup")
