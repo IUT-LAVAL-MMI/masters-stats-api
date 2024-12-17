@@ -81,8 +81,11 @@ def load_candidates(filepath: str) -> pd.DataFrame:
     converters = dict((col, float64_sec_converter) for col in use_cand_cols[16:])
     converters['acad'] = secure_acad_acadreg_converter
     converters['acad_reg'] = secure_acad_acadreg_converter
+    for key, cvt in cand_dtypes.items():
+        converters[key] = cvt
+
     DF_CAND = pd.read_csv(filepath, sep=';',
-                          usecols=use_cand_cols, dtype=cand_dtypes, converters=converters)
+                          usecols=use_cand_cols, converters=converters)
     LOG.debug('- Remove inconsistent bad row')
     bad_rows = (DF_CAND.eta_uai.isna()) | (DF_CAND.eta_nom.isna()) \
                | (DF_CAND.acad == -1) | (DF_CAND.acad_lib.isna()) | (DF_CAND.acad_reg == -1) | (

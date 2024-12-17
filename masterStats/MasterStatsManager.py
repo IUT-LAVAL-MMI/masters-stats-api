@@ -5,6 +5,9 @@ from masterStats.loading.candidatures_loading import load_candidates, create_aca
     create_secteur_disciplinaires, create_mentions, create_formations, create_stats_candidatures
 from masterStats.loading.disc_mapping_loading import load_disc_mapping
 from masterStats.loading.insertion_pro_loading import load_insertionspro, create_stats_insertionspro
+from mongo.dao.MongoDAO import MongoDAO
+from mongo.model.Formation import Formation
+from mongo.repository.FormationRepository import FormationRepository
 from utils.Singleton import Singleton
 
 __all__ = ['MasterStatsManager']
@@ -67,10 +70,48 @@ class MasterStatsManager(metaclass=Singleton):
     def stats_insertionspro_df(self) -> Optional[pd.DataFrame]:
         return self._stats_inspros_df
 
+    def search_formations_ifc(self, search: str):
+        mongo_dao = MongoDAO()
+        formation_repo: FormationRepository = FormationRepository(mongo_dao.database)
+        matching_formations_ifc = formation_repo.find_by_textsearch(search)
+        return [f.ifc for f in matching_formations_ifc]
+
     def build_stats(self):
         LOG.info("Load base CSV")
         self._build_candidates_models()
         self._build_insertionspro_models()
+
+    def build_mongo_cache(self, clear_col: bool=False):
+        mongo_dao = MongoDAO()
+        formation_repo: FormationRepository = FormationRepository(mongo_dao.database)
+
+        if clear_col:
+            formation_repo.get_collection().delete_many({})
+
+        test_presence = next(formation_repo.get_collection().find({}, limit=1, projection={'id': 1}), None)
+        if test_presence:
+            LOG.info("%s", str(test_presence))
+            LOG.info("Mongo cache already built. Do not reconstuct")
+        else:
+            LOG.info("Create Mongo formation cache")
+            for formation in self._generate_formation_mongo_doc():
+                formation_repo.save(formation)
+
+    def _generate_formation_mongo_doc(self):
+        LOG.info("Load candidates and disc mapping dfs")
+        base_cand_df = load_candidates(self.__configuration.get('CANDIDATURE_SOURCE'))
+        for row_idx, row in base_cand_df.iterrows():
+            yield Formation(
+                ifc=row['ifc'],
+                lieux=row['lieux_formation'],
+                etablissement=row['eta_nom'],
+                academie=row['acad_lib'],
+                region=row['acad_reg_lib'],
+                parcours=row['parcours'],
+                mention=row['mention'],
+                discipline=row['disci_lib'],
+                secteur_disciplinaire=row['secteur_disci_lib']
+            )
 
     def _build_candidates_models(self):
         LOG.info("Load candidates and disc mapping dfs")

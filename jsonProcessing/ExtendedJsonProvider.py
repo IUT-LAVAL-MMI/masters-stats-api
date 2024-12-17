@@ -36,6 +36,8 @@ class ExtendedJsonProvider(JSONProvider):
                 return json.dumps(None, **kwargs)
             else:
                 return json.dumps(float(obj), **kwargs)
+        elif isinstance(obj, pd.Series):
+            return obj.to_json(orient='index', force_ascii=False, compression=None, indent=None)
         else:
             return json.dumps(obj, **kwargs)
 

@@ -1,5 +1,6 @@
 import logging
 from flask import Blueprint, Response, make_response, jsonify, request
+from werkzeug.exceptions import NotFound
 
 from controllers.http_cache_management import http_cached
 from masterStats.MasterStatsManager import MasterStatsManager
@@ -27,6 +28,7 @@ def get_etablissements():
 
 
 @base_model_controller.route("/api/rest/secteurs-disciplinaires", methods=['GET'])
+@http_cached()
 def get_sect_discs():
     df = MasterStatsManager().sect_discs_df
     return jsonify(df.reset_index())
@@ -45,6 +47,8 @@ def get_formations():
     etab_uais = request.args.getlist('uai')
     sec_disc_ids = request.args.getlist('sdid')
     depts = request.args.getlist('dept')
+    search = request.args.get('q')
+
     # retrieve base df and apply filter if any
     df = MasterStatsManager().formations_df
     filter = True
@@ -67,7 +71,23 @@ def get_formations():
             filter &= (df.dept == depts[0])
         else:
             filter &= (df.dept.isin(depts))
+    if search:
+        LOG.info("Do a text search on formations")
+        ifcs = MasterStatsManager().search_formations_ifc(search)
+        filter &= (df.index.isin(ifcs))
+
     if filter is not True:
         df = df.loc[filter, :]
 
     return jsonify(df.reset_index())
+
+
+@base_model_controller.route("/api/rest/formations/<ifc>", methods=['GET'])
+@http_cached()
+def get_formation(ifc: str):
+    df = MasterStatsManager().formations_df
+    try:
+        formation = df.loc[ifc, :]
+        return jsonify(formation)
+    except KeyError:
+        raise NotFound('Ifc inconnu')
