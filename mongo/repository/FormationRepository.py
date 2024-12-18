@@ -19,7 +19,7 @@ class FormationRepository(AbstractRepository[Formation]):
         }, projection={'ifc': 1})
 
     def find_by_criteria(self, etab_uais: Optional[List[str]], sec_disc_ids: Optional[List[int]],
-                         depts: Optional[List[str]], text_search: Optional[str]):
+                         depts: Optional[List[int]], text_search: Optional[str]):
         query = dict()
         if etab_uais:
             if len(etab_uais) == 1:
@@ -28,11 +28,11 @@ class FormationRepository(AbstractRepository[Formation]):
                 query['etabUai'] = {'$in': etab_uais}
         if sec_disc_ids:
             if len(sec_disc_ids) == 1:
-                query['secDiscId'] = sec_disc_ids[0]
+                query['sectDiscId'] = sec_disc_ids[0]
             else:
-                query['secDiscId'] = {'$in': sec_disc_ids}
+                query['sectDiscId'] = {'$in': sec_disc_ids}
         if depts:
-            if len(etab_uais) == 1:
+            if len(depts) == 1:
                 query['dept'] = depts[0]
             else:
                 query['dept'] = {'$in': depts}

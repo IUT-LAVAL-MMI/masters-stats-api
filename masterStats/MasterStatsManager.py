@@ -90,9 +90,13 @@ class MasterStatsManager(metaclass=Singleton):
         sec_disc_ids_int = None
         if sec_disc_ids:
             sec_disc_ids_int = [int(sd) for sd in sec_disc_ids]
+        depts_int = None
+        if depts:
+            depts_int = [int(dp) for dp in depts]
+
         mongo_dao = MongoDAO()
         formation_repo: FormationRepository = FormationRepository(mongo_dao.database)
-        return list(formation_repo.find_by_criteria(etab_uais, sec_disc_ids_int, depts, text_search))
+        return list(formation_repo.find_by_criteria(etab_uais, sec_disc_ids_int, depts_int, text_search))
 
     def build_api_stats(self):
         LOG.info("Load base CSV stats")
