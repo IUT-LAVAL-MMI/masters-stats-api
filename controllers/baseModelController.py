@@ -60,9 +60,12 @@ def get_formations():
 @base_model_controller.route("/api/rest/formations/<ifc>", methods=['GET'])
 @http_cached()
 def get_formation(ifc: str):
-    df = MasterStatsManager().formations_df
+    full_details = request.args.get('full-details')
     try:
-        formation = df.loc[ifc, :]
-        return jsonify(formation)
+        formation = MasterStatsManager().find_formation_by_ifc(ifc)
+        if full_details and full_details.lower() not in ['no', '0', 'false']:
+            return formation.to_full_dict()
+        else:
+            return formation.to_small_dict()
     except KeyError:
-        raise NotFound('Ifc inconnu')
+        raise NotFound('IFC de formation inconnu')

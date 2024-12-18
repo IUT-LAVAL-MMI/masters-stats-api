@@ -77,11 +77,13 @@ class MasterStatsManager(metaclass=Singleton):
     def stats_insertionspro_df(self) -> Optional[pd.DataFrame]:
         return self._stats_inspros_df
 
-    def search_formations_ifc(self, search: str):
+    def find_formation_by_ifc(self, ifc: str):
         mongo_dao = MongoDAO()
         formation_repo: FormationRepository = FormationRepository(mongo_dao.database)
-        matching_formations_ifc = formation_repo.find_by_textsearch(search)
-        return [f.ifc for f in matching_formations_ifc]
+        formation = formation_repo.find_one_by({'ifc': ifc})
+        if formation is None:
+            raise KeyError('IFC unknown for formation')
+        return formation
 
     def search_formations(self, etab_uais: Optional[List[str]], sec_disc_ids: Optional[List[str]],
                           depts: Optional[List[str]], text_search: Optional[str]):
