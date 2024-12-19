@@ -65,7 +65,7 @@ class MongoStatSearchResult(StatSearchResult):
 
 
 def null_if_na(v):
-    return None if isnan(v) else v
+    return None if v is not None and isinstance(v, float) and isnan(v) else v
 
 
 def create_dict_from_document_keys(document: Mapping, *largs) -> dict:
@@ -166,7 +166,7 @@ def create_ins_general(ins: Mapping) -> Tuple[str, Dict]:
         'nbResponses': null_if_na(ins.get('nombre_de_reponses')),
         'tauxReponse': null_if_na(ins.get('taux_de_reponse')),
         'pbEchantillon': ins.get('pbEchantillon'),
-        'pbEchantillonRaison': ins.get('pbEchantillonRaison'),
+        'pbEchantillonRaison': null_if_na(ins.get('pbEchantillonRaison')),
     }
 
 
