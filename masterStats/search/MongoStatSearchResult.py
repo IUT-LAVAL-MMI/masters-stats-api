@@ -166,7 +166,7 @@ def create_ins_general(ins: Mapping) -> Tuple[str, Dict]:
         'nbResponses': null_if_na(ins.get('nombre_de_reponses')),
         'tauxReponse': null_if_na(ins.get('taux_de_reponse')),
         'pbEchantillon': ins.get('pbEchantillon'),
-        'pbEchantillonRaison': null_if_na(ins.get('pbEchantillonRaison')),
+        'pbEchantillonRaison': ins.get('pbEchantillonRaison'),
     }
 
 
